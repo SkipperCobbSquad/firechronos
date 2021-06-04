@@ -1,5 +1,6 @@
 const cron = require('node-cron');
 const admin = require('firebase-admin');
+const express = require('express');
 const puppeteer = require('puppeteer');
 const nodemailer = require('nodemailer');
 const lighthouse = require('lighthouse');
@@ -7,17 +8,23 @@ const { URL } = require('url');
 
 const serviceAccount = require('');
 
+const app = express();
+
+app.use('/', (req, res) => {
+  res.send('OK');
+});
+
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
 const transport = nodemailer.createTransport({
-  host: 'smtp.mailtrap.io',
-  port: 2525,
+  host: "",
+  port: 0,
   auth: {
-    user: 'ce58a327dec8b5',
-    pass: '626a59b0f990cd',
-  },
+    user: "",
+    pass: ""
+  }
 });
 
 const fiter = (data) => {
@@ -32,6 +39,7 @@ const fiter = (data) => {
       admin.firestore().collection('tasks').doc(doc[0]).set(doc[1]);
     }
   }
+  console.log(toExec);
   return toExec;
 };
 
@@ -87,7 +95,11 @@ cron.schedule('* * 0 * * *', () => {
     });
 });
 
+app.listen(process.env.PORT || 5000, () => {
+  console.log(`Listening on ${process.env.PORT || 5000}`);
+});
+
 //Hit for Heroku
 setInterval(() => {
-  fetch(process.env.MAINDOMAIN || 'http://loclahost:2000');
+  fetch(process.env.MAINDOMAIN || 'http://loclahost:5000');
 }, 25 * 60000);
