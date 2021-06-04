@@ -56,11 +56,9 @@ const lightMe = async (browser, data) => {
           },
         ],
       });
-      await browser.close();
-    } catch (err) {
-      await browser.close();
-    }
+    } catch (err) {}
   }
+  await browser.close();
 };
 
 //Main task run every day at 12:00 am
